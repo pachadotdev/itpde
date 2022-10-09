@@ -31,7 +31,7 @@ The data goes back to 1986 for Agriculture, and to 1988 for Mining & Energy and 
 \details{
 There are differences with respect to the original CSV file. This version provides a more compact representation of the data, with the following changes:
 \itemize{
-\item{The \code{exporter_name} and \code{importer_name} columns are provided in the country names table as \code{country_name} and can be joined by using the \verb{_iso3} and \verb{_dynamic} columns.}
+\item{The \code{exporter_name} and \code{importer_name} columns are provided in the \code{country_names} table as \code{country_name} and can be joined by using the \verb{_iso3} and \verb{_dynamic} columns.}
 \item{The \code{industry_descr} column is provided in the industry names table.}
 \item{The \code{broad_sector} column is provided in the sector names table and \code{broad_sector_id} was created for this version of the table.}
 }

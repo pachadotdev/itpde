@@ -87,7 +87,7 @@ if (!file.exists(trade_tsv)) {
   fwrite(industry_names, paste0(fout, "industry_names.tsv"), sep = "\t")
   fwrite(sector_names, paste0(fout, "sector_names.tsv"), sep = "\t")
 
-  yrs <- c(min(trade$year), max(trade$year))
+  yrs <- min(trade$year):max(trade$year)
   rm(trade, industry_names, sector_names)
 
   csv_gravity <- list.files(finp,

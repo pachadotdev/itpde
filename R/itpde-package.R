@@ -36,7 +36,7 @@ NULL
 #' @name gravity
 #' @docType data
 #' @author USITC, adapted from WTO, UN COMTRADE, National Geographic and other sources
-#' @format A data frame with 109,465 rows and 67 columns:
+#' @format A data frame with 1,973,285 rows and 67 columns:
 #' |Variable name              |Variable description                                                                      |
 #' |:--------------------------|:-----------------------------------------------------------------------------------------|
 #' |year                       |Year of observation                                                                       |

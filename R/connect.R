@@ -114,7 +114,7 @@ itpde_status <- function(msg = TRUE) {
 }
 
 itpde_tables <- function() {
-  c("itpde", "country_names", "industry_names", "sector_names")
+  c("trade", "country_names", "industry_names", "sector_names", "metadata")
 }
 
 itpde_cache <- new.env()

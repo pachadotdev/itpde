@@ -6,6 +6,7 @@ url <- "https://www.usitc.gov/data/gravity/itpd_e/itpd_e_r02.zip"
 finp <- "dev/finp/"
 fout <- "dev/fout/"
 zip <- gsub(".*/", finp, url)
+zip2 <- paste0(fout, "itpde.zip")
 
 try(dir.create(finp, recursive = T))
 try(dir.create(fout, recursive = T))
@@ -15,7 +16,7 @@ if (!file.exists(zip)) {
 }
 
 if (!length(list.files(finp, pattern = "csv")) == 1) {
-  archive::archive_extract(zip, dir = finp)
+  archive_extract(zip, dir = finp)
 }
 
 trade_tsv <- paste0(fout, "trade.tsv")
@@ -67,4 +68,8 @@ if (!file.exists(trade_tsv)) {
   fwrite(country_names, paste0(fout, "country_names.tsv"), sep = "\t")
   fwrite(industry_names, paste0(fout, "industry_names.tsv"), sep = "\t")
   fwrite(sector_names, paste0(fout, "sector_names.tsv"), sep = "\t")
+}
+
+if (!file.exists(zip2)) {
+  archive_write_dir(zip2, fout)
 }

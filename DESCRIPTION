@@ -1,0 +1,37 @@
+Package: itpde
+Title: The International Trade and Production Database for Estimation (ITPD-E)
+Version: 0.0.0.9000
+Authors@R: 
+    c(
+     person("Mauricio", "Vargas Sepulveda", , "hello+r@pacha.dev", 
+            role = c("aut", "cre"),
+            comment = c(ORCID = "0000-0003-1017-7574")),
+     person(family = "United States International Trade Comission (USITC)",
+            role = "dtc")
+    )
+Description: Provides consistent data on international and domestic trade for 243 countries, 170 industries, and 17 years.
+    The data are constructed at the industry level covering agriculture, mining, energy, manufacturing, and services for
+    the period 1986-2019. The ITPD-E is constructed using reported administrative data and intentionally does not include
+    information estimated by statistical techniques, which makes the ITPD-E well suited for estimation of economic models,
+    such as the gravity model of trade.
+License: CC0
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Depends: 
+    R (>= 2.10)
+LazyData: true
+URL: https://pacha.dev/itpde
+BugReports: https://github.com/pachadotdev/itpde/issues
+Imports: 
+    DBI,
+    duckdb,
+    httr,
+    purrr,
+    cli,
+    crayon,
+    rstudioapi,
+    tools
+Suggests: 
+    gravity
+    

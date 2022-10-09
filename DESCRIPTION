@@ -1,6 +1,7 @@
 Package: usitcgravity
 Title: USITC Gravity Database Adapted From the International Trade and 
-    Production Database for Estimation (ITPD-E) and Dynamic Gravity Dataset (DGD)
+    Production Database for Estimation (ITPD-E) and Dynamic Gravity Dataset 
+    (DGD)
 Version: 0.0.0.9000
 Authors@R: 
     c(

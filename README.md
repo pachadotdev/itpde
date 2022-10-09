@@ -1,24 +1,30 @@
-# itpde: The International Trade and Production Database for Estimation (ITPD-E)
+# USITC Gravity Database Adapted From the International Trade and Production Database for Estimation (ITPD-E) and Dynamic Gravity Dataset (DGD)
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of itpde is to provide the same data from [The International Trade and Production Database for Estimation (ITPD-E)](https://www.usitc.gov/data/gravity/itpde.htm) ready to be used in R (i.e. with the [gravity](https://pacha.dev/gravity) package).
+## About
 
-The package provides consistent data on international and domestic trade for 243 countries, 170 industries, and 17 years. The data are constructed at the industry level covering agriculture, mining, energy, manufacturing, and services for the period 1986-2019. The ITPD-E is constructed using reported administrative data and intentionally does not include information estimated by statistical techniques, which makes the ITPD-E well suited for estimation of economic models, such as the gravity model of trade.
+The goal of `usitcgravity` is to provide data from [The International Trade and Production Database for Estimation (ITPD-E)](https://www.usitc.gov/data/gravity/itpde.htm) and the [Dynamic Gravity Dataset (DGD)](https://www.usitc.gov/data/gravity/dgd.htm) ready to be used in R (i.e. with the [gravity](https://pacha.dev/gravity) package).
 
-`itpde` can be installed by running
+The package provides consistent data on international and domestic trade for 243 countries, 170 industries, and 17 years alongside variables for gravity estimation. The data sources are ITPD-E and DGD from the USITC, which use administrative data and intentionally does not include information estimated by statistical techniques, which makes the datasets suitable for gravity estimation.
+
+`usitcgravity` can be installed by running
 
 ```
 # install.packages("remotes")
-install_github("pachadotdev/itpde")
+install_github("pachadotdev/usitcgravity")
 ```
 
-The main source to obtain the data in this package is:
+## Sources
 
 Borchert, Ingo & Larch, Mario & Shikher, Serge & Yotov, Yoto, 2020. *The International Trade and Production Database for Estimation (ITPD-E)*. School of Economics Working Paper Series 2020-5, LeBow College of Business, Drexel University.
 
-An example to estimate the gravity model of trade with cross sectional for different sectors data is:
+Gurevich, Tamara & Herman, Peter, 2018. *The Dynamic Gravity Dataset: 1948-2016*. USITC Working Paper 2018-02-A.
+
+# Example
+
+Estimating the gravity model of trade with exporter/importer time fixed effects for 4 sectors:
 
 ```r
 library(usitcgravity)
@@ -48,7 +54,6 @@ models <- map(
       ) %>% 
       collect()
     
-    # add exporter/importer time fixed effects for the estimation
     d <- d %>% 
       mutate(
         etfe = paste(exporter_iso3, year, sep = "_"),

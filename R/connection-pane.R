@@ -2,9 +2,9 @@ sql_action <- function() {
   if (requireNamespace("rstudioapi", quietly = TRUE) &&
       exists("documentNew", asNamespace("rstudioapi"))) {
     contents <- paste(
-      "-- !preview conn=itpde::itpde_connect()",
+      "-- !preview conn=usitcgravity::usitcgravity_connect()",
       "",
-      "SELECT * FROM itpde WHERE year = 2010",
+      "SELECT * FROM usitcgravity WHERE year = 2010",
       "",
       sep = "\n"
     )
@@ -17,23 +17,23 @@ sql_action <- function() {
   }
 }
 
-itpde_pane <- function() {
+usitcgravity_pane <- function() {
   observer <- getOption("connectionObserver")
   if (!is.null(observer) && interactive()) {
     observer$connectionOpened(
-      type = "ITPD-E",
-      host = "itpde",
-      displayName = "ITPD-E",
-      icon = system.file("img", "edit-sql.png", package = "itpde"),
-      connectCode = "itpde::itpde_pane()",
-      disconnect = itpde::itpde_disconnect,
+      type = "USITC Gravity Database",
+      host = "usitcgravity",
+      displayName = "USITC Gravity Database",
+      icon = system.file("img", "edit-sql.png", package = "usitcgravity"),
+      connectCode = "usitcgravity::usitcgravity_pane()",
+      disconnect = usitcgravity::usitcgravity_disconnect,
       listObjectTypes = function() {
         list(
           table = list(contains = "data")
         )
       },
       listObjects = function(type = "datasets") {
-        tbls <- DBI::dbListTables(itpde_connect())
+        tbls <- DBI::dbListTables(usitcgravity_connect())
         data.frame(
           name = tbls,
           type = rep("table", length(tbls)),
@@ -41,7 +41,7 @@ itpde_pane <- function() {
         )
       },
       listColumns = function(table) {
-        res <- DBI::dbGetQuery(itpde_connect(),
+        res <- DBI::dbGetQuery(usitcgravity_connect(),
                                paste("SELECT * FROM", table, "LIMIT 1"))
         data.frame(
           name = names(res), type = vapply(res, function(x) class(x)[1],
@@ -50,27 +50,27 @@ itpde_pane <- function() {
         )
       },
       previewObject = function(rowLimit, table) {
-        DBI::dbGetQuery(itpde_connect(),
+        DBI::dbGetQuery(usitcgravity_connect(),
                         paste("SELECT * FROM", table, "LIMIT", rowLimit))
       },
       actions = list(
         Status = list(
-          icon = system.file("img", "edit-sql.png", package = "itpde"),
-          callback = itpde_status
+          icon = system.file("img", "edit-sql.png", package = "usitcgravity"),
+          callback = usitcgravity_status
         ),
         SQL = list(
-          icon = system.file("img", "edit-sql.png", package = "itpde"),
+          icon = system.file("img", "edit-sql.png", package = "usitcgravity"),
           callback = sql_action
         )
       ),
-      connectionObject = itpde_connect()
+      connectionObject = usitcgravity_connect()
     )
   }
 }
 
-update_itpde_pane <- function() {
+update_usitcgravity_pane <- function() {
   observer <- getOption("connectionObserver")
   if (!is.null(observer)) {
-    observer$connectionUpdated("ITPD-E", "itpde", "")
+    observer$connectionUpdated("USITC Gravity Database", "usitcgravity", "")
   }
 }

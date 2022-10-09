@@ -1,50 +1,50 @@
-#' Download the ITPD-E Database to your computer
+#' Download the USITC Gravity Database to your computer
 #'
 #' This command downloads the entire database as a single zip file that is
 #' unzipped to create the local database. If you do not want to download the
 #' database on your home computer, run usethis::edit_r_environ() to create the
-#' environment variable ITPDE_DIR with the path.
+#' environment variable USITCGRAVITY_DIR with the path.
 #'
 #' @param ver The version to download. By default it is the latest version
 #' available on GitHub. All versions can be viewed at
-#' <https://github.com/pachadotdev/itpde/releases>.
+#' <https://github.com/pachadotdev/usitcgravity/releases>.
 #'
 #' @return NULL
 #' @export
 #'
 #' @examples
-#' \dontrun{ itpde_download() }
-itpde_download <- function(ver = NULL) {
+#' \dontrun{ usitcgravity_download() }
+usitcgravity_download <- function(ver = NULL) {
   duckdb_version <- utils::packageVersion("duckdb")
   db_pattern <- paste0("v", gsub("\\.", "", duckdb_version), ".sql$")
 
-  duckdb_current_files <- list.files(itpde_path(), db_pattern, full.names = T)
+  duckdb_current_files <- list.files(usitcgravity_path(), db_pattern, full.names = T)
 
   if (length(duckdb_current_files) > 0 &&
       # avoid listing initial empty duckdb files
       all(file.size(duckdb_current_files) > 5000000000)) {
-    msg("A itpde database already exists for your version of DuckDB.")
-    msg("If you really want to download the database again, run itpde_delete() and then download it again.")
+    msg("A usitcgravity database already exists for your version of DuckDB.")
+    msg("If you really want to download the database again, run usitcgravity_delete() and then download it again.")
     return(invisible())
   }
 
   msg("Downloading the database from GitHub...")
 
   destdir <- tempdir()
-  dir <- itpde_path()
+  dir <- usitcgravity_path()
 
   suppressWarnings(try(dir.create(dir, recursive = TRUE)))
 
-  zfile <- get_gh_release_file("pachadotdev/itpde",
+  zfile <- get_gh_release_file("pachadotdev/usitcgravity",
                                tag_name = ver,
                                dir = destdir
   )
   ver <- attr(zfile, "ver")
 
-  suppressWarnings(try(itpde_disconnect()))
+  suppressWarnings(try(usitcgravity_disconnect()))
 
   msg("Deleting any old versions of the database...\n")
-  itpde_delete(ask = FALSE)
+  usitcgravity_delete(ask = FALSE)
 
   msg("Unzipping the necessary files...")
   utils::unzip(zfile, overwrite = TRUE, exdir = destdir)
@@ -60,7 +60,7 @@ itpde_download <- function(ver = NULL) {
 
     msg(sprintf("Creating %s table...", tout))
 
-    con <- itpde_connect()
+    con <- usitcgravity_connect()
 
     suppressMessages(
       DBI::dbExecute(
@@ -84,13 +84,13 @@ itpde_download <- function(ver = NULL) {
   metadata$duckdb_version <- as.character(metadata$duckdb_version)
   metadata$modification_date <- as.character(metadata$modification_date)
 
-  con <- itpde_connect()
+  con <- usitcgravity_connect()
   suppressMessages(DBI::dbWriteTable(con, "metadata", metadata, append = T, temporary = F))
   DBI::dbDisconnect(con, shutdown = TRUE)
 
-  update_itpde_pane()
-  itpde_pane()
-  itpde_status()
+  update_usitcgravity_pane()
+  usitcgravity_pane()
+  usitcgravity_status()
 }
 
 #' Download tsv files from GitHub

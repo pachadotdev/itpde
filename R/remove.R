@@ -1,27 +1,27 @@
-#' Delete the itpde database from your computer
+#' Delete the usitcgravity database from your computer
 #'
-#' Deletes the `itpde` directory and all of its contents, including
-#' all versions of the itpde database created with any DuckDB version.
+#' Deletes the `usitcgravity` directory and all of its contents, including
+#' all versions of the usitcgravity database created with any DuckDB version.
 #'
 #' @param ask If so, a menu will be displayed to confirm the action to
-#' delete any existing itpde database. By default it is true.
+#' delete any existing usitcgravity database. By default it is true.
 #' @return NULL
 #' @export
 #'
 #' @examples
-#' \dontrun{ itpde_delete() }
-itpde_delete <- function(ask = TRUE) {
+#' \dontrun{ usitcgravity_delete() }
+usitcgravity_delete <- function(ask = TRUE) {
   if (isTRUE(ask)) {
     answer <- utils::menu(c("Agree", "Cancel"),
-                   title = "This will eliminate all itpde databases",
+                   title = "This will eliminate all usitcgravity databases",
                    graphics = FALSE)
     if (answer == 2) {
        return(invisible())
     }
   }
 
-  suppressWarnings(itpde_disconnect())
-  try(unlink(itpde_path(), recursive = TRUE))
-  update_itpde_pane()
+  suppressWarnings(usitcgravity_disconnect())
+  try(unlink(usitcgravity_path(), recursive = TRUE))
+  update_usitcgravity_pane()
   return(invisible())
 }

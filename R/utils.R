@@ -1,6 +1,6 @@
 msg <- function(..., startup = FALSE) {
   if (startup) {
-    if (!isTRUE(getOption("itpde.quiet"))) {
+    if (!isTRUE(getOption("usitcgravity.quiet"))) {
       packageStartupMessage(text_col(...))
     }
   } else {

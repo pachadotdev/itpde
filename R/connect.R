@@ -1,45 +1,45 @@
-itpde_path <- function() {
-  sys_itpde_path <- Sys.getenv("ITPDE_DIR")
-  sys_itpde_path <- gsub("\\\\", "/", sys_itpde_path)
-  if (sys_itpde_path == "") {
-    return(gsub("\\\\", "/", tools::R_user_dir("itpde")))
+usitcgravity_path <- function() {
+  sys_usitcgravity_path <- Sys.getenv("USITCGRAVITY_DIR")
+  sys_usitcgravity_path <- gsub("\\\\", "/", sys_usitcgravity_path)
+  if (sys_usitcgravity_path == "") {
+    return(gsub("\\\\", "/", tools::R_user_dir("usitcgravity")))
   } else {
-    return(gsub("\\\\", "/", sys_itpde_path))
+    return(gsub("\\\\", "/", sys_usitcgravity_path))
   }
 }
 
-itpde_check_status <- function() {
-  if (!itpde_status(FALSE)) {
-    stop("The itpde database is empty or damaged.
-         Download it with itpde_download().")
+usitcgravity_check_status <- function() {
+  if (!usitcgravity_status(FALSE)) {
+    stop("The usitcgravity database is empty or damaged.
+         Download it with usitcgravity_download().")
   }
 }
 
-#' Connect to the itpde database
+#' Connect to the usitcgravity database
 #'
 #' Returns a local database connection. This corresponds to a DBI-compatible
 #' DuckDB database.
 #'
-#' @param dir Database location on disk. Defaults to the `itpde`
-#' directory inside the R user folder or the `ITPDE_DIR` environment variable
+#' @param dir Database location on disk. Defaults to the `usitcgravity`
+#' directory inside the R user folder or the `USITCGRAVITY_DIR` environment variable
 #' if specified.
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#'  DBI::dbListTables(itpde_connect())
+#'  DBI::dbListTables(usitcgravity_connect())
 #'
 #'  DBI::dbGetQuery(
-#'   itpde_connect(),
-#'   'SELECT * FROM itpde WHERE year = 2010'
+#'   usitcgravity_connect(),
+#'   'SELECT * FROM usitcgravity WHERE year = 2010'
 #'  )
 #' }
-itpde_connect <- function(dir = itpde_path()) {
+usitcgravity_connect <- function(dir = usitcgravity_path()) {
   duckdb_version <- utils::packageVersion("duckdb")
-  db_file <- paste0(dir, "/itpde_duckdb_v", gsub("\\.", "", duckdb_version), ".sql")
+  db_file <- paste0(dir, "/usitcgravity_duckdb_v", gsub("\\.", "", duckdb_version), ".sql")
 
-  db <- mget("itpde_connect", envir = itpde_cache, ifnotfound = NA)[[1]]
+  db <- mget("usitcgravity_connect", envir = usitcgravity_cache, ifnotfound = NA)[[1]]
 
   if (inherits(db, "DBIConnection")) {
     if (DBI::dbIsValid(db)) {
@@ -57,9 +57,9 @@ itpde_connect <- function(dir = itpde_path()) {
   error = function(e) {
     if (grepl("Failed to open database", e)) {
       stop(
-        "The local itpde database is being used by another process. Try
+        "The local usitcgravity database is being used by another process. Try
         closing other R sessions or disconnecting the database using
-        itpde_disconnect() in the other sessions.",
+        usitcgravity_disconnect() in the other sessions.",
         call. = FALSE
       )
     } else {
@@ -69,53 +69,53 @@ itpde_connect <- function(dir = itpde_path()) {
   finally = NULL
   )
 
-  assign("itpde_connect", con, envir = itpde_cache)
+  assign("usitcgravity_connect", con, envir = usitcgravity_cache)
   con
 }
 
-#' Disconnect the itpde database
+#' Disconnect the usitcgravity database
 #'
 #' An auxiliary function to disconnect from the database.
 #'
 #' @examples
-#' itpde_disconnect()
+#' usitcgravity_disconnect()
 #' @export
 #'
-itpde_disconnect <- function() {
-  itpde_disconnect_()
+usitcgravity_disconnect <- function() {
+  usitcgravity_disconnect_()
 }
 
-itpde_disconnect_ <- function(environment = itpde_cache) {
-  db <- mget("itpde_connect", envir = itpde_cache, ifnotfound = NA)[[1]]
+usitcgravity_disconnect_ <- function(environment = usitcgravity_cache) {
+  db <- mget("usitcgravity_connect", envir = usitcgravity_cache, ifnotfound = NA)[[1]]
   if (inherits(db, "DBIConnection")) {
     DBI::dbDisconnect(db, shutdown = TRUE)
   }
   observer <- getOption("connectionObserver")
   if (!is.null(observer)) {
-    observer$connectionClosed("ITPD-E", "itpde")
+    observer$connectionClosed("USITC Gravity Database", "usitcgravity")
   }
 }
 
-itpde_status <- function(msg = TRUE) {
-  expected_tables <- sort(itpde_tables())
-  existing_tables <- sort(DBI::dbListTables(itpde_connect()))
+usitcgravity_status <- function(msg = TRUE) {
+  expected_tables <- sort(usitcgravity_tables())
+  existing_tables <- sort(DBI::dbListTables(usitcgravity_connect()))
 
   if (isTRUE(all.equal(expected_tables, existing_tables))) {
     status_msg <- crayon::green(paste(cli::symbol$tick,
-    "The local itpde database is OK."))
+    "The local usitcgravity database is OK."))
     out <- TRUE
   } else {
     status_msg <- crayon::red(paste(cli::symbol$cross,
-    "The local itpde database is empty, damaged or not compatible with your duckdb version. Download it with itpde_download()."))
+    "The local usitcgravity database is empty, damaged or not compatible with your duckdb version. Download it with usitcgravity_download()."))
     out <- FALSE
   }
   if (msg) msg(status_msg)
   invisible(out)
 }
 
-itpde_tables <- function() {
-  c("trade", "country_names", "industry_names", "sector_names", "metadata")
+usitcgravity_tables <- function() {
+  c("trade", "gravity", "country_names", "region_names", "industry_names", "sector_names", "metadata")
 }
 
-itpde_cache <- new.env()
-reg.finalizer(itpde_cache, itpde_disconnect_, onexit = TRUE)
+usitcgravity_cache <- new.env()
+reg.finalizer(usitcgravity_cache, usitcgravity_disconnect_, onexit = TRUE)

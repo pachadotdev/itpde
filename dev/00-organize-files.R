@@ -31,7 +31,7 @@ if (!file.exists(zip3)) {
   try(download.file(url3, zip3, method = "wget", quiet = T))
 }
 
-if (!length(list.files(finp, pattern = "csv")) == 1) {
+if (!length(list.files(finp, pattern = "csv")) > 1) {
   archive_extract(zip, dir = finp)
   archive_extract(zip2, dir = finp)
   archive_extract(zip3, dir = finp)
@@ -56,6 +56,13 @@ if (!file.exists(trade_tsv)) {
     ) %>%
     distinct() %>%
     arrange(country_iso3)
+
+  # keep Cambodia and Western Samoa only
+
+  # country_names %>% group_by(country_iso3, country_dynamic_code) %>% count() %>% filter(n > 1) %>% inner_join(country_names)
+
+  country_names <- country_names %>%
+    filter(!country_name %in% c("Kampuchea", "Samoa"))
 
   trade <- trade %>%
     select(-exporter_name, -importer_name)
@@ -139,6 +146,20 @@ if (!file.exists(trade_tsv)) {
   gravity <- gravity %>%
     select(year:island_o, region_id_o, landlocked_d:island_d,
            region_id_d, agree_pta_goods:gdp_wdi_cap_const_d)
+
+  # fix region codes
+
+  region_names <- region_names %>%
+    mutate(region = gsub("suth_", "south_", region))
+
+  region_names <- region_names %>%
+    filter(region_id != 15)
+
+  gravity <- gravity %>%
+    mutate(
+      region_id_o = ifelse(region_id_o == 15L, 13L, region_id_o),
+      region_id_d = ifelse(region_id_d == 15L, 13L, region_id_d)
+    )
 
   fwrite(gravity, paste0(fout, "gravity.tsv"), sep = "\t")
   fwrite(region_names, paste0(fout, "region_names.tsv"), sep = "\t")

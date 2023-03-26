@@ -2,7 +2,7 @@ Package: usitcgravity
 Title: USITC Gravity Database Adapted From the International Trade and 
     Production Database for Estimation (ITPD-E) and Dynamic Gravity Dataset 
     (DGD)
-Version: 0.0.0.9000
+Version: 0.1
 Authors@R: 
     c(
      person("Mauricio", "Vargas Sepulveda", , "hello+r@pacha.dev", 

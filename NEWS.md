@@ -1,3 +1,7 @@
+# itpde 0.2
+
+* Fixes inconsistencies in the gravity table (see README)
+
 # itpde 0.1
 
 * Fixes duplicated ISO3 code + Dynamic code for Cambodia and West Samoa

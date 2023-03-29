@@ -161,6 +161,121 @@ if (!file.exists(trade_tsv)) {
       region_id_d = ifelse(region_id_d == 15L, 13L, region_id_d)
     )
 
+  gravity <- map_df(
+    sort(unique(gravity$year)),
+    function(y) {
+      message(y)
+
+      cols <- colnames(gravity)
+
+      cols_id <- grep("^year$|^iso3_o$|^iso3_d$|^dynamic_code_o$|^dynamic_code_d$", cols, value = T)
+      cols_sym <- grep("^year$|_o$|_d$|^colony_of", cols, value = T, invert = T)
+      cols_nsym <- setdiff(cols, cols_sym)
+
+      dy_sym <- gravity %>%
+        filter(year == y) %>%
+        select(all_of(c(cols_id, cols_sym))) %>%
+        collect()
+
+      dy_sym <- dy_sym %>%
+        bind_rows(
+          dy_sym %>%
+            select(iso3_o = iso3_d, iso3_d = iso3_o,
+                   dynamic_code_o = dynamic_code_d, dynamic_code_d = dynamic_code_o,
+                   everything())
+        ) %>%
+        group_by(year, iso3_o, iso3_d, dynamic_code_o, dynamic_code_d) %>%
+        mutate(n = paste0("n", row_number()))
+
+      dy_sym <- dy_sym %>%
+        pivot_longer(colony_ever:sanction_imposition_trade) %>%
+        pivot_wider(names_from = n, values_from = value) %>%
+        mutate(value = pmax(n1, n2, na.rm = T)) %>%
+        select(-n1, -n2)
+
+      dy_sym <- dy_sym %>%
+        pivot_wider(names_from = name, values_from = value)
+
+      dy_nsym <- gravity %>%
+        filter(year == y) %>%
+        select(all_of(c(cols_nsym))) %>%
+        collect()
+
+      dy_nsym <- dy_nsym %>%
+        full_join(
+          dy_nsym %>%
+            select(
+              year,
+              iso3_o = iso3_d,
+              dynamic_code_o = dynamic_code_d,
+              iso3_d = iso3_o,
+              dynamic_code_d = dynamic_code_o,
+              colony_of_origin_ever = colony_of_destination_ever,
+              colony_of_destination_ever = colony_of_origin_ever,
+              member_gatt_o = member_gatt_d,
+              member_gatt_d = member_gatt_o,
+              member_wto_o = member_wto_d,
+              member_wto_d = member_wto_o,
+              member_eu_o = member_eu_d,
+              member_eu_d = member_eu_o,
+              lat_o = lat_d,
+              lat_d = lat_o,
+              lng_o = lng_d,
+              lng_d = lng_o,
+              landlocked_o = landlocked_d,
+              landlocked_d = landlocked_o,
+              island_o = island_d,
+              island_d = island_o,
+              region_id_o = region_id_d,
+              region_id_d = region_id_o,
+              capital_const_o = capital_const_d,
+              capital_const_d = capital_const_o,
+              capital_cur_o = capital_cur_d,
+              capital_cur_d = capital_cur_o,
+              gdp_pwt_const_o = gdp_pwt_const_d,
+              gdp_pwt_const_d = gdp_pwt_const_o,
+              gdp_pwt_cur_o = gdp_pwt_cur_d,
+              gdp_pwt_cur_d = gdp_pwt_cur_o,
+              pop_o = pop_d,
+              pop_d = pop_o,
+              hostility_level_o = hostility_level_d,
+              hostility_level_d = hostility_level_o,
+              polity_o = polity_d,
+              polity_d = polity_o,
+              gdp_wdi_cur_o = gdp_wdi_cur_d,
+              gdp_wdi_cur_d = gdp_wdi_cur_o,
+              gdp_wdi_cap_cur_o = gdp_wdi_cap_cur_d,
+              gdp_wdi_cap_cur_d = gdp_wdi_cap_cur_o,
+              gdp_wdi_const_o = gdp_wdi_const_d,
+              gdp_wdi_const_d = gdp_wdi_const_o,
+              gdp_wdi_cap_const_o = gdp_wdi_cap_const_d,
+              gdp_wdi_cap_const_d = gdp_wdi_cap_const_o
+            ),
+          by = c("year", "iso3_o", "iso3_d", "dynamic_code_o", "dynamic_code_d")
+        )
+
+      dy_nsym <- dy_nsym %>%
+        pivot_longer(colony_of_destination_ever.x:gdp_wdi_cap_const_d.y) %>%
+        separate(name, c("name1", "name2"), sep = "\\.")
+
+      dy_nsym <- dy_nsym %>%
+        pivot_wider(names_from = name2, values_from = value) %>%
+        mutate(value = pmax(x, y, na.rm = T)) %>%
+        select(-x, -y)
+
+      dy_nsym <- dy_nsym %>%
+        pivot_wider(names_from = name1, values_from = value)
+
+      dy <- dy_sym %>%
+        inner_join(dy_nsym) %>%
+        select(all_of(cols))
+
+      rm(dy_sym, dy_nsym)
+
+      return(dy)
+    }
+  )
+
   fwrite(gravity, paste0(fout, "gravity.tsv"), sep = "\t")
   fwrite(region_names, paste0(fout, "region_names.tsv"), sep = "\t")
 }

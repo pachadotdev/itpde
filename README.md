@@ -22,7 +22,51 @@ Borchert, Ingo & Larch, Mario & Shikher, Serge & Yotov, Yoto, 2020. *The Interna
 
 Gurevich, Tamara & Herman, Peter, 2018. *The Dynamic Gravity Dataset: 1948-2016*. USITC Working Paper 2018-02-A.
 
-# Example
+## Differences with the original sources.
+
+Since v0.1:
+
+* Fixes duplicated ISO3 code + Dynamic code for Cambodia and West Samoa
+* Fixes duplicated label "south_east_asia" vs "suth_east_asia"
+
+Since v0.2:
+
+* Fixes inconsistencies in the gravity table
+
+The last point deserves an example. See the differences in the `common_colonizer` variable for Argentina-Chile-Peru and Spain. This variable should be the same, for example, for ARG-CHL or CHL-ARG, but it's not in the original dataset.
+
+```
+> tbl(con, "usitc_gravity") %>% 
++   filter(iso3_o == "ARG", iso3_d %in% c("CHL", "ESP", "PER"), year == 2015) %>%
++   select(iso3_o, iso3_d, colony_of_origin_ever, colony_of_destination_ever, colony_ever, common_colonizer)
+# Source:   SQL [3 x 6]
+# Database: postgres  [pacha@localhost:5432/tariff_man]
+  iso3_o iso3_d colony_of_origin_ever colony_of_destination_ever colony_ever common_colonizer
+  <chr>  <chr>                  <int>                      <int>       <int>            <int>
+1 ARG    CHL                        0                          0           0                0
+2 ARG    ESP                        0                          1           1                0
+3 ARG    PER                        0                          0           0                0
+
+> tbl(con, "usitc_gravity") %>% 
++   filter(iso3_d == "ARG", iso3_o %in% c("CHL", "ESP", "PER"), year == 2015) %>%
++   select(iso3_o, iso3_d, colony_of_origin_ever, colony_of_destination_ever, colony_ever, common_colonizer)
+# Source:   SQL [3 x 6]
+# Database: postgres  [pacha@localhost:5432/tariff_man]
+  iso3_o iso3_d colony_of_origin_ever colony_of_destination_ever colony_ever common_colonizer
+  <chr>  <chr>                  <int>                      <int>       <int>            <int>
+1 CHL    ARG                        0                          0           0                1
+2 ESP    ARG                        1                          0           1                0
+3 PER    ARG                        0                          0           0                1
+```
+
+I corrected this by using the gravity table itself in two ways:
+
+* By binding rows on a pairwise basis for all symmetrical variables (i.e., `common_colonizer`) and obtained the maximum for each pair.
+* By obtaining a full join on a pairwise basis for all non-symmetrical variables (i.e., `colony_of_origin_ever`) and obtained the maximum for each pair.
+
+To check this I ran some queries to verify, for example, that the populations for CHL-ESP are around `c(20,40)` and not `c(40,40)` (i.e., Spain doubles the population of Chile), and that for the same pair `colony_of_origin_ever = 0` but for ESP-CHL `colony_of_origin_ever = 1`.
+
+## Usage
 
 Estimating the gravity model of trade with exporter/importer time fixed effects for 4 sectors:
 

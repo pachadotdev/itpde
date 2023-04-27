@@ -3,6 +3,9 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
+**This repository is unmaintained, please see the new repository https://github.com/pachadotdev/gravitydatasets.**
+
+
 ## About
 
 The goal of `usitcgravity` is to provide data from [The International Trade and Production Database for Estimation (ITPD-E)](https://www.usitc.gov/data/gravity/itpde.htm) and the [Dynamic Gravity Dataset (DGD)](https://www.usitc.gov/data/gravity/dgd.htm) ready to be used in R (i.e. with the [gravity](https://pacha.dev/gravity) package).

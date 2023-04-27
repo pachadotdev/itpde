@@ -5,7 +5,7 @@ Title: USITC Gravity Database Adapted From the International Trade and
 Version: 0.2
 Authors@R: 
     c(
-     person("Mauricio", "Vargas Sepulveda", , "hello+r@pacha.dev", 
+     person("Mauricio", "Vargas Sepulveda", , "m.sepulveda@mail.utoronto.ca", 
             role = c("aut", "cre"),
             comment = c(ORCID = "0000-0003-1017-7574")),
      person(family = "United States International Trade Comission (USITC)",
